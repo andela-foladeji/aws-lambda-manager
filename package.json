@@ -1,0 +1,32 @@
+{
+  "name": "aws-lambda-manager",
+  "version": "1.0.0",
+  "description": "A simple AWS lambda function manager",
+  "main": "lambda.js",
+  "bin": {
+  	"lambda": "./lambda.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sgoyal77/aws-lambda-manager.git"
+  },
+  "keywords": [
+    "AWS",
+    "Lambda",
+    "Deployment",
+    "DevOps"
+  ],
+  "author": "Siddhartha Goyal",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sgoyal77/aws-lambda-manager/issues"
+  },
+  "homepage": "https://github.com/sgoyal77/aws-lambda-manager#readme",
+  "dependencies": {
+    "commander": "^2.9.0",
+    "node-cmd": "^3.0.0"
+  }
+}
