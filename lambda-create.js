@@ -73,6 +73,10 @@ try {
 createRes = JSON.parse(createRes);
 console.log(`Lambda function created with resource ARN '${createRes.FunctionArn}'`);
 
+//update the function spec with lambda function ARN
+lambdaspec.lambdaconfig.FunctionArn = createRes.FunctionArn;
+fs.writeFileSync(lambdaspecFullpath, JSON.stringify(lambdaspec, null, 2));
+
 //if the create was successful and a stage is specified then an alias is also created 
 //the alias will point to the specific version of the lambda function just published
 var stage = program.stage;
