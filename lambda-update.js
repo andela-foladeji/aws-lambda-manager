@@ -55,7 +55,7 @@ if (!program.skipUpload) {
 	}
 }
 
-//update the lambda function
+//update the lambda function and its configuration
 var lambdaconfig = lambdaspec.lambdaconfig;
 
 console.log(`Updating lambda function '${lambdaconfig.FunctionName}'...`);
@@ -69,6 +69,24 @@ try {
 	process.exit(1);
 }
 updateRes = JSON.parse(updateRes);
+
+if (updateRes) {
+	var updateConfig = '';
+	try {
+		//grab the function arn and then delete the fields in the configuration that
+		//the aws cli function will reject (these fields are not deleted in the actual
+		//configuration file, just the in memory representation of the configuration)
+		var arn = lambdaconfig.FunctionArn;
+		delete lambdaconfig.FunctionName;
+		delete lambdaconfig.FunctionArn;
+		delete lambdaconfig.Publish;
+		updateConfig = execSync(`aws lambda update-function-configuration ${profile} --function-name ${arn} --vpc-config '${JSON.stringify(lambdaspec.vpcconfig)}' --cli-input-json '${JSON.stringify(lambdaconfig)}'`);
+	} catch (err) {
+		console.error(`Error updating lambda configuration: ${err.message}`);
+		process.exit(1);
+	}
+}
+
 console.log(`Lambda function updated`);
 
 //if the lambda function was successfully updated
