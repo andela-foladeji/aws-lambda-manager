@@ -32,14 +32,25 @@ profile += program.region ? ` --region ${program.region}` : "";
 //if the skip-upload flag is set then we skip over zipping and uploading the package to s3
 if (!program.skipUpload) {
 	
+	var wd = process.cwd();
+	console.log(`Working directory: ${wd}`);
+	
 	var files = lambdaspec.files;
-	var filepaths = files.map((glob) => { return path.isAbsolute(glob) ? glob : path.join(process.cwd(), glob); });
-	var ziplocal = path.isAbsolute(zipfile) ? zipfile : path.join(process.cwd(), zipfile);
-
+	var filepaths = files;//files.map((glob) => { return path.isAbsolute(glob) ? glob : path.join(process.cwd(), glob); });
+	var zipabsolute = path.isAbsolute(zipfile) ? zipfile : path.join(process.cwd(), zipfile);
+	var ziplocal = path.join(path.dirname(zipfile),path.basename(zipfile,'.zip'));//path.isAbsolute(zipfile) ? zipfile : path.join(process.cwd(), zipfile);
+	
+	try {
+		execSync(`rm ${zipabsolute}`);
+	} catch (err) {
+		console.error(`Error removing old zip file: ${err.message}`);
+		process.exit(1);
+	}
+	
 	//zip up the distribution files
 	console.log(`Creating lambda function distribution package '${zipfile}' from [${files.join()}]...`);
 	try {
-		execSync(`zip -rq ${ziplocal} ${filepaths.join(" ")} ${fs.realpathSync('package.json')} ${fs.realpathSync('node_modules')}`);
+		execSync(`zip -rq ${ziplocal} ${filepaths.join(" ")} package.json node_modules`);
 	} catch (err) {
 		console.error(`Error zipping file: ${err.message}`);
 		process.exit(1);
@@ -48,7 +59,7 @@ if (!program.skipUpload) {
 	//upload the zip file to s3
 	console.log(`Uploading '${zipfile}' to '${s3bucket}' with key '${s3key}'...`);
 	try {
-		execSync(`aws s3api put-object ${profile} --bucket ${s3bucket} --key ${s3key} --body ${ziplocal}`);
+		execSync(`aws s3api put-object ${profile} --bucket ${s3bucket} --key ${s3key} --body ${zipabsolute}`);
 	} catch (err) {
 		console.error(`Error uploading '${zipfile}' to '${s3bucket}': ${err.message}`);
 		process.exit(1);

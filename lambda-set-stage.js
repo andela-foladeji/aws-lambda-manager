@@ -63,6 +63,7 @@ var lambdaspecPath = path.dirname(lambdaspecFullpath);
 var lambdaspecHistory = `${path.basename(lambdaspecFullpath, '.json')}-history.json`;
 
 var history = JSON.parse(fs.readFileSync(path.join(lambdaspecPath,lambdaspecHistory)));
+history.aliases = history.aliases || {};
 
 //if we did a create then simply create a new object for the stage in question and write
 //it out
@@ -76,6 +77,7 @@ if (create) {
 		versions: [version]
 	}; 
 } else {
+	history.aliases[stage] = history.aliases[stage] || {current:"", versions:[]};
 	history.aliases[stage].current = version;
 	if (!history.aliases[stage].versions.includes(version))
 		history.aliases[stage].versions.push(version);
