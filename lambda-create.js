@@ -46,8 +46,26 @@ if (!program.skipUpload) {
 		process.exit(1);
 	}
 	
+	//run an npm update to get the latest dependencies
+	console.log(`Updating package dependencies...`);
+	try {
+		execSync('npm update -S');
+	} catch (err) {
+		console.error(`Error updating dependencies: ${err.message}`);
+		process.exit(1);
+	}
+	
+	//compile the package
+	console.log(`Compiling package...`);
+	try {
+		execSync('npm run compile');
+	} catch (err) {
+		console.error(`Error compiling package: ${err.message}`);
+		process.exit(1);
+	}
+	
 	//zip up the distribution files
-	console.log(`Creating lambda function distribution package '${zipfile}' from [${files.join()}]...`);
+	console.log(`Creating lambda distribution package '${zipfile}' from [${files.join()}]...`);
 	try {
 		execSync(`zip -rq ${ziplocal} ${filepaths.join(" ")} package.json node_modules`);
 	} catch (err) {
