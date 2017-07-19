@@ -67,17 +67,17 @@ if (!program.skipUpload) {
 		process.exit(1);
 	}
 
-	//run an npm uninstall to uninstall development dependencies
-	console.log(`Installing packages...`);
+	//remove dev dependencies from output to streamline output
+	console.log(`Removing dev dependencies...`);
 	try {
-		execSync('npm uninstall --D');
+		execSync('npm prune --production');
 	} catch (err) {
-		console.error(`Error Installing packages: ${err.message}`);
+		console.error(`Error removing dev dependencies: ${err.message}`);
 		process.exit(1);
 	}
 	
 	//zip up the distribution files
-	console.log(`Creating lambda distribution package '${zipfile}' from [${files.join()}]...`);
+	console.log(`Creating distribution package '${zipfile}' from [${files.join()}]...`);
 	try {
 		execSync(`zip -rq ${ziplocal} ${filepaths.join(" ")} package.json node_modules`);
 	} catch (err) {
