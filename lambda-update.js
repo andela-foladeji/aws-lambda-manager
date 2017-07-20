@@ -20,7 +20,8 @@ if (!lambdaspec.length) {
 var lambdaspecFullpath = fs.realpathSync(lambdaspec[0]);
 lambdaspec = require(lambdaspecFullpath);
 
-var zipfile = lambdaspec.zipfile;
+var current_time = new Date().getTime();
+var zipfile = `${lambdaspec.zipfile}_${current_time}.zip`;
 var s3bucket = lambdaspec.s3bucket;
 var s3keyprefix = lambdaspec.s3keyprefix;
 var s3key = s3keyprefix + zipfile;
@@ -51,7 +52,7 @@ if (!program.skipUpload) {
 	//run an npm update to get the latest dependencies
 	console.log(`Updating package dependencies...`);
 	try {
-		execSync('npm update -S');
+		execSync('npm update -S && npm update -D');
 	} catch (err) {
 		console.error(`Error updating dependencies: ${err.message}`);
 		process.exit(1);
@@ -65,9 +66,18 @@ if (!program.skipUpload) {
 		console.error(`Error compiling package: ${err.message}`);
 		process.exit(1);
 	}
+
+	//remove dev dependencies from output to streamline output
+	console.log(`Removing dev dependencies...`);
+	try {
+		execSync('npm prune --production');
+	} catch (err) {
+		console.error(`Error removing dev dependencies: ${err.message}`);
+		process.exit(1);
+	}
 	
 	//zip up the distribution files
-	console.log(`Creating lambda distribution package '${zipfile}' from [${files.join()}]...`);
+	console.log(`Creating distribution package '${zipfile}' from [${files.join()}]...`);
 	try {
 		execSync(`zip -rq ${ziplocal} ${filepaths.join(" ")} package.json node_modules`);
 	} catch (err) {
@@ -133,6 +143,7 @@ if (updateRes) {
 	var deployment = {
 		lambdaVersion: updateRes.Version,
 		moduleVersion: lambdaspec.version,
+		deploymentPackage: zipfile,
 		date: updateRes.LastModified,
 		user: user.toString().trim()
 	};
@@ -144,6 +155,3 @@ if (updateRes) {
 }
 
 process.exit(0);
-
-
-
