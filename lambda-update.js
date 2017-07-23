@@ -42,10 +42,9 @@ if (!program.skipUpload) {
 	var ziplocal = path.join(path.dirname(zipfile),path.basename(zipfile,'.zip'));//path.isAbsolute(zipfile) ? zipfile : path.join(process.cwd(), zipfile);
 	
 	try {
-		if (fs.existsSync(zipabsolute))
-			execSync(`rm ${zipabsolute}`);
+		execSync(`rm -f ${lambdaspec.zipfile}_*.zip`);
 	} catch (err) {
-		console.error(`Error removing old zip file: ${err.message}`);
+		console.error(`Error removing old zip files: ${err.message}`);
 		process.exit(1);
 	}
 	
