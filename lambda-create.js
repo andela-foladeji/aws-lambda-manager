@@ -46,10 +46,10 @@ if (!program.skipUpload) {
 		process.exit(1);
 	}
 	
-	//run an npm update to get the latest dependencies
-	console.log(`Updating package dependencies...`);
+	//run a yarn install to get the latest dependencies
+	console.log(`Installing package dependencies...`);
 	try {
-		execSync('npm update -S && npm update -D');
+		execSync('yarn install');
 	} catch (err) {
 		console.error(`Error updating dependencies: ${err.message}`);
 		process.exit(1);
@@ -58,7 +58,7 @@ if (!program.skipUpload) {
 	//compile the package
 	console.log(`Compiling package...`);
 	try {
-		execSync('npm run compile');
+		execSync('yarn run compile');
 	} catch (err) {
 		console.error(`Error compiling package: ${err.message}`);
 		process.exit(1);
@@ -67,7 +67,7 @@ if (!program.skipUpload) {
 	//remove dev dependencies from output to streamline output
 	console.log(`Removing dev dependencies...`);
 	try {
-		execSync('npm prune --production');
+		execSync('rm -rf node_modules/ && yarn install --production');
 	} catch (err) {
 		console.error(`Error removing dev dependencies: ${err.message}`);
 		process.exit(1);
