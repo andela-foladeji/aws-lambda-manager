@@ -48,6 +48,14 @@ if (!program.skipUpload) {
 		process.exit(1);
 	}
 	
+	//remove the yarn.lock file
+	try {
+		execSync(`rm -f yarn.lock`);
+	} catch (err) {
+		console.error(`Error removing yarn.lock: ${err.message}`);
+		process.exit(1);
+	}
+	
 	//run a yarn install to get the latest dependencies
 	console.log(`Installing package dependencies...`);
 	try {
