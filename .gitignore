@@ -1,1 +1,3 @@
 node_modules
+.project
+examples/basic.json
