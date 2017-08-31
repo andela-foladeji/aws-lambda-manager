@@ -85,46 +85,46 @@ if (!program.skipUpload) {
 	}
 	
 	//upload the zip file to s3
-	console.log(`Uploading '${zipfile}' to '${s3bucket}' with key '${s3key}'...`);
-	try {
-		execSync(`aws s3api put-object ${profile} --bucket ${s3bucket} --key ${s3key} --body ${zipabsolute}`);
-	} catch (err) {
-		console.error(`Error uploading '${zipfile}' to '${s3bucket}': ${err.message}`);
-		process.exit(1);
-	}
+	// console.log(`Uploading '${zipfile}' to '${s3bucket}' with key '${s3key}'...`);
+	// try {
+	// 	execSync(`aws s3api put-object ${profile} --bucket ${s3bucket} --key ${s3key} --body ${zipabsolute}`);
+	// } catch (err) {
+	// 	console.error(`Error uploading '${zipfile}' to '${s3bucket}': ${err.message}`);
+	// 	process.exit(1);
+	// }
 }
 
 //update the lambda function and its configuration
-var lambdaconfig = lambdaspec.lambdaconfig;
+// var lambdaconfig = lambdaspec.lambdaconfig;
 
-console.log(`Updating lambda function '${lambdaconfig.FunctionName}'...`);
-var updateRes = '';
-try {
-	var publish = lambdaconfig.Publish ? '--publish' : '';
-	updateRes = execSync(`aws lambda update-function-code ${profile} --function-name ${lambdaconfig.FunctionArn} --s3-key ${s3key} --s3-bucket ${s3bucket} ${publish}`,
-							null, {stdio:['pipe','pipe','ignore']});
-} catch (err) {
-	console.error(`Error updating lambda function: ${err.message}`);
-	process.exit(1);
-}
-updateRes = JSON.parse(updateRes);
+// console.log(`Updating lambda function '${lambdaconfig.FunctionName}'...`);
+// var updateRes = '';
+// try {
+// 	var publish = lambdaconfig.Publish ? '--publish' : '';
+// 	updateRes = execSync(`aws lambda update-function-code ${profile} --function-name ${lambdaconfig.FunctionArn} --s3-key ${s3key} --s3-bucket ${s3bucket} ${publish}`,
+// 							null, {stdio:['pipe','pipe','ignore']});
+// } catch (err) {
+// 	console.error(`Error updating lambda function: ${err.message}`);
+// 	process.exit(1);
+// }
+// updateRes = JSON.parse(updateRes);
 
-if (updateRes) {
-	var updateConfig = '';
-	try {
-		//grab the function arn and then delete the fields in the configuration that
-		//the aws cli function will reject (these fields are not deleted in the actual
-		//configuration file, just the in memory representation of the configuration)
-		var arn = lambdaconfig.FunctionArn;
-		delete lambdaconfig.FunctionName;
-		delete lambdaconfig.FunctionArn;
-		delete lambdaconfig.Publish;
-		updateConfig = execSync(`aws lambda update-function-configuration ${profile} --function-name ${arn} --vpc-config '${JSON.stringify(lambdaspec.vpcconfig)}' --cli-input-json '${JSON.stringify(lambdaconfig)}'`);
-	} catch (err) {
-		console.error(`Error updating lambda configuration: ${err.message}`);
-		process.exit(1);
-	}
-}
+// if (updateRes) {
+// 	var updateConfig = '';
+// 	try {
+// 		//grab the function arn and then delete the fields in the configuration that
+// 		//the aws cli function will reject (these fields are not deleted in the actual
+// 		//configuration file, just the in memory representation of the configuration)
+// 		var arn = lambdaconfig.FunctionArn;
+// 		delete lambdaconfig.FunctionName;
+// 		delete lambdaconfig.FunctionArn;
+// 		delete lambdaconfig.Publish;
+// 		updateConfig = execSync(`aws lambda update-function-configuration ${profile} --function-name ${arn} --vpc-config '${JSON.stringify(lambdaspec.vpcconfig)}' --cli-input-json '${JSON.stringify(lambdaconfig)}'`);
+// 	} catch (err) {
+// 		console.error(`Error updating lambda configuration: ${err.message}`);
+// 		process.exit(1);
+// 	}
+// }
 
 console.log(`Lambda function updated`);
 
