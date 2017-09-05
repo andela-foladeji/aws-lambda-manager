@@ -72,7 +72,7 @@ if (!program.skipUpload) {
 		execSync('npm prune --production');
 	} catch (err) {
 		console.error(`Error removing dev dependencies: ${err.message}`);
-		process.exit(1);
+		//process.exit(1);
 	}
 	
 	//zip up the distribution files
