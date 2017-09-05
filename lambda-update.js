@@ -131,26 +131,27 @@ console.log(`Lambda function updated`);
 //if the lambda function was successfully updated
 //update the version history object
 if (updateRes) {
+
 	
-	var lambdaspecPath = path.dirname(lambdaspecFullpath);
-	var lambdaspecHistory = `${path.basename(lambdaspecFullpath, '.json')}-history.json`;
+	// var lambdaspecPath = path.dirname(lambdaspecFullpath);
+	// var lambdaspecHistory = `${path.basename(lambdaspecFullpath, '.json')}-history.json`;
 	
-	var history = JSON.parse(fs.readFileSync(path.join(lambdaspecPath,lambdaspecHistory)));
+	// var history = JSON.parse(fs.readFileSync(path.join(lambdaspecPath,lambdaspecHistory)));
 	
-	//create a new deployment object
-	var user = execSync(`git config github.user`);
-	var deployment = {
-		lambdaVersion: updateRes.Version,
-		moduleVersion: lambdaspec.version,
-		deploymentPackage: zipfile,
-		date: updateRes.LastModified,
-		user: user.toString().trim()
-	};
-	history.versions.push(deployment);
+	// //create a new deployment object
+	// var user = execSync(`git config github.user`);
+	// var deployment = {
+	// 	lambdaVersion: updateRes.Version,
+	// 	moduleVersion: lambdaspec.version,
+	// 	deploymentPackage: zipfile,
+	// 	date: updateRes.LastModified,
+	// 	user: user.toString().trim()
+	// };
+	// history.versions.push(deployment);
 	
-	//now save the history object to file
-	fs.writeFileSync(path.join(lambdaspecPath, lambdaspecHistory),
-						JSON.stringify(history, null, 2));
+	// //now save the history object to file
+	// fs.writeFileSync(path.join(lambdaspecPath, lambdaspecHistory),
+	// 					JSON.stringify(history, null, 2));
 }
 
 process.exit(0);
