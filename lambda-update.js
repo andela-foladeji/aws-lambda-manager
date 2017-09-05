@@ -85,13 +85,13 @@ if (!program.skipUpload) {
 	}
 	
 	//upload the zip file to s3
-	// console.log(`Uploading '${zipfile}' to '${s3bucket}' with key '${s3key}'...`);
-	// try {
-	// 	execSync(`aws s3api put-object ${profile} --bucket ${s3bucket} --key ${s3key} --body ${zipabsolute}`);
-	// } catch (err) {
-	// 	console.error(`Error uploading '${zipfile}' to '${s3bucket}': ${err.message}`);
-	// 	process.exit(1);
-	// }
+	console.log(`Uploading '${zipfile}' to '${s3bucket}' with key '${s3key}'...`);
+	try {
+		execSync(`aws s3api put-object ${profile} --bucket ${s3bucket} --key ${s3key} --body ${zipabsolute}`);
+	} catch (err) {
+		console.error(`Error uploading '${zipfile}' to '${s3bucket}': ${err.message}`);
+		process.exit(1);
+	}
 }
 
 //update the lambda function and its configuration
