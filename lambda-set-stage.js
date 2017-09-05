@@ -7,10 +7,10 @@ const path = require('path');
 
 /* gets the latest version number for the lambda function */
 function getLambdaFunctionLastVersion(functionName) {
-    var output = JSON.parse(execSync(`aws lambda list-versions-by-function --function-name ${functionName}`));
+    var output = JSON.parse(execSync(`aws lambda list-versions-by-function --region eu-central-1 --function-name ${functionName}`));
     var latestVersionNumber = output.Versions[output.Versions.length-1].Version;
     while(output.NextMarker) {
-        output = JSON.parse(execSync(`aws lambda list-versions-by-function --function-name ${functionName} --marker ${output.NextMarker}`));
+        output = JSON.parse(execSync(`aws lambda list-versions-by-function --region eu-central-1 --function-name ${functionName} --marker ${output.NextMarker}`));
         latestVersionNumber = output.Versions[output.Versions.length-1].Version;
 	}
 	return latestVersionNumber;
