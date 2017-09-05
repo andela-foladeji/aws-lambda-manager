@@ -69,7 +69,7 @@ if (!program.skipUpload) {
 	//remove dev dependencies from output to streamline output
 	console.log(`Removing dev dependencies...`);
 	try {
-		execSync('npm prune --production');
+		// execSync('npm prune --production');
 	} catch (err) {
 		console.error(`Error removing dev dependencies: ${err.message}`);
 		//process.exit(1);
