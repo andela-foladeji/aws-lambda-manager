@@ -5,6 +5,16 @@ const execSync = require('child_process').execSync;
 const fs = require('fs');
 const path = require('path');
 
+/* gets the latest version number for the lambda function */
+function getLambdaFunctionLastVersion(functionName) {
+    let output = JSON.parse(execSync(`aws lambda list-versions-by-function --function-name ${functionName}`));
+    let latestVersionNumber = output.Versions[output.Versions.length-1].Version;
+    while(output.NextMarker) {
+        output = JSON.parse(execSync(`aws lambda list-versions-by-function --function-name ${functionName} --marker ${output.NextMarker}`));
+        latestVersionNumber = output.Versions[output.Versions.length-1].Version;
+    }
+}
+
 program
 	.option('-p, --profile <profile>', 'The local profile to use when deploying')
 	.option('-r, --region <region>', 'The region in which to deploy the function')
@@ -12,11 +22,13 @@ program
 
 var lambdaspec = program.args[0].trim();
 var stage = program.args[1].trim();
-var version = program.args[2].trim().replace("$","\$");
 
 //get the actual lambda spec
 var lambdaspecFullpath = fs.realpathSync(lambdaspec);
 lambdaspec = require(lambdaspecFullpath);
+
+// the version number will be dynamically generated
+var version = program.args[2].trim().replace("$","\$") || getLambdaFunctionLastVersion(lambdaspec.lambdaconfig.FunctionName);
 
 //set the profile object according to the profile and region settings
 var profile = program.profile ? `--profile ${program.profile}` : "";
