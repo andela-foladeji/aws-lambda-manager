@@ -29,7 +29,7 @@ var lambdaspecFullpath = fs.realpathSync(lambdaspec);
 lambdaspec = require(lambdaspecFullpath);
 
 // the version number will be dynamically generated
-var version = program.args[2].trim().replace("$","\$") || getLambdaFunctionLastVersion(lambdaspec.lambdaconfig.FunctionName);
+var version = (program.args[2]) ? program.args[2].trim().replace("$","\$") : getLambdaFunctionLastVersion(lambdaspec.lambdaconfig.FunctionName);
 
 //set the profile object according to the profile and region settings
 var profile = program.profile ? `--profile ${program.profile}` : "";
