@@ -4,7 +4,7 @@
   "description": "A simple AWS lambda function manager",
   "main": "lambda.js",
   "bin": {
-  	"lambda": "./lambda.js"
+    "lambda": "./lambda.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
